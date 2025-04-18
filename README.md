@@ -119,7 +119,5 @@ For issues, suggestions, or contributions, open a GitHub issue or email: `vivekm
 
 ## 📝 License
 
-MIT License © 2025 Your Name
+MIT License © 2025 Vivek Menon M
 ```
-
-Let me know if you want this auto-filled with your GitHub username, email, or linked repository!
