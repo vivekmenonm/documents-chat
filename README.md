@@ -53,12 +53,99 @@ Create a `.env` file in the root directory:
 
 ```
 OPENAI_API_KEY=your_openai_api_key
-DATABASE_URL=postgresql://username:password@localhost:5432/your_db_name
+DATABASE_URL=postgresql://username:password@localhost:5432/<your_database>
 ```
 
-> ⚠️ Ensure your PostgreSQL user has `CREATE TABLE` permissions.
+## ✅ 1. **Install PostgreSQL**
 
-### 4. Run the App
+### For Ubuntu/Debian:
+```bash
+sudo apt update
+sudo apt install postgresql postgresql-contrib -y
+```
+
+### Start PostgreSQL service:
+```bash
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+```
+
+---
+
+## ✅ 2. **Create Database, User & Grant Access**
+
+### Step A: Enter PostgreSQL shell as the default `postgres` user:
+```bash
+sudo -u postgres psql
+```
+
+### Step B: Run these commands inside the psql shell:
+```sql
+-- Create user
+CREATE USER <username> WITH PASSWORD <NewStrongPassword123!>;
+
+-- Create database
+CREATE DATABASE <your_database> OWNER <user_name>;
+
+-- Grant privileges
+GRANT ALL PRIVILEGES ON DATABASE microsaas_db TO microsaas;
+```
+
+### Step C: Exit psql
+```sql
+\q
+```
+
+---
+
+## ✅ 3. **Update `.env` or Code**
+
+In your `.env` file:
+```env
+DATABASE_URL=postgresql://<username>:<NewStrongPassword123!>@localhost:5432/<your_database>
+```
+
+---
+
+## ✅ 4. **(Optional) Enable Remote Access**
+If your app is outside the VM or container:
+
+### Edit `postgresql.conf`:
+```bash
+sudo nano /etc/postgresql/*/main/postgresql.conf
+```
+
+Find:
+```
+#listen_addresses = 'localhost'
+```
+Change to:
+```
+listen_addresses = '*'
+```
+
+### Edit `pg_hba.conf`:
+```bash
+sudo nano /etc/postgresql/*/main/pg_hba.conf
+```
+
+Add at the end:
+```
+host    all             all             0.0.0.0/0               md5
+```
+
+Then restart PostgreSQL:
+```bash
+sudo systemctl restart postgresql
+```
+
+---
+## ✅ 5. **Test Connection**
+Try using a Postgres client or:
+```bash
+psql -h localhost -U <username> -d <your_database>
+```
+### 5. Run the App
 
 ```bash
 streamlit run app.py
